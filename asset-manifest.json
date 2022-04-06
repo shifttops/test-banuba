@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/test-banuba/static/css/main.7174dc8a.css",
-    "main.js": "/test-banuba/static/js/main.07fd08cd.js",
+    "main.css": "/test-banuba/static/css/main.98b19fc6.css",
+    "main.js": "/test-banuba/static/js/main.c883e976.js",
     "static/media/BanubaSDK.simd.wasm": "/test-banuba/static/media/BanubaSDK.simd.93b125400208cc42ee30.wasm",
     "static/media/BanubaSDK.data": "/test-banuba/static/media/BanubaSDK.560c396757e00ca26fab.data",
     "static/media/BanubaSDK.wasm": "/test-banuba/static/media/BanubaSDK.b272b9c08614ec67e178.wasm",
@@ -9,11 +9,11 @@
     "static/media/poster.jpg": "/test-banuba/static/media/poster.97916655b48108e41119.jpg",
     "static/media/blur_bg.zip": "/test-banuba/static/media/blur_bg.fde323636f5ee2e53cc0.zip",
     "index.html": "/test-banuba/index.html",
-    "main.7174dc8a.css.map": "/test-banuba/static/css/main.7174dc8a.css.map",
-    "main.07fd08cd.js.map": "/test-banuba/static/js/main.07fd08cd.js.map"
+    "main.98b19fc6.css.map": "/test-banuba/static/css/main.98b19fc6.css.map",
+    "main.c883e976.js.map": "/test-banuba/static/js/main.c883e976.js.map"
   },
   "entrypoints": [
-    "static/css/main.7174dc8a.css",
-    "static/js/main.07fd08cd.js"
+    "static/css/main.98b19fc6.css",
+    "static/js/main.c883e976.js"
   ]
 }
