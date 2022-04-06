@@ -3,6 +3,7 @@ import {
 } from 'mobx';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
+import { toast } from 'react-toastify';
 import {
   Effect,
   MediaStream as Media, MediaStreamCapture,
@@ -22,7 +23,7 @@ interface RootStoreType {
   localStream: MediaStream | undefined;
   remoteStream: MediaStream | undefined;
   readonly servers: any;
-  firebaseConfig: {
+  readonly firebaseConfig: {
     apiKey: string,
     authDomain: string,
     projectId: string,
@@ -32,8 +33,17 @@ interface RootStoreType {
     measurementId: string,
   }
   app: any;
+  isBlured: boolean;
 
   reloadTrack(flag: 'audio' | 'video'): boolean;
+
+  setStream(stream: MediaStream, flag: 'remote' | 'local'): Promise<MediaStream>;
+
+  createOffer(): Promise<string>;
+
+  add(id: string): Promise<void>;
+
+  changeBlurEffect(ref: HTMLVideoElement): Promise<void>;
 }
 
 class RoomStore implements RootStoreType {
@@ -54,6 +64,8 @@ class RoomStore implements RootStoreType {
 
   @observable remoteStream: MediaStream | undefined;
 
+  @observable isBlured: boolean = false;
+
   firebaseConfig = {
     apiKey: 'AIzaSyCiJ90Y8v_CyUNFTWrK6iLRb9wuQ7MYTLQ',
     authDomain: 'test-banuba.firebaseapp.com',
@@ -71,7 +83,6 @@ class RoomStore implements RootStoreType {
     this.app = firebase.firestore();
 
     this.connection.ontrack = (ev) => {
-      console.log(ev.track);
       if (this.remoteStream) {
         if (this.remoteStream.getVideoTracks().length) {
           this.remoteStream.removeTrack(this.remoteStream.getVideoTracks()[0]);
@@ -81,7 +92,8 @@ class RoomStore implements RootStoreType {
     };
   }
 
-  @action.bound async setStream(stream: MediaStream, flag: 'remote' | 'local'): Promise<MediaStream> {
+  @action.bound
+  async setStream(stream: MediaStream, flag: 'remote' | 'local'): Promise<MediaStream> {
     stream.getTracks().map((track) => this.connection?.addTrack(track));
 
     if (flag === 'local') {
@@ -93,31 +105,46 @@ class RoomStore implements RootStoreType {
     return this.remoteStream;
   }
 
-  @action.bound addBlur = async (ref: HTMLVideoElement) => {
-    const player = await Player.create({
-      clientToken: this.banubaToken,
-      locateFile: {
-        'BanubaSDK.data': data,
-        'BanubaSDK.wasm': wasm,
-        'BanubaSDK.simd.wasm': simd,
-      },
-    });
-    const webar = new MediaStreamCapture(player);
+  @action.bound changeBlurEffect = async (ref: HTMLVideoElement): Promise<void> => {
+    try {
+      const player = await Player.create({
+        clientToken: this.banubaToken,
+        locateFile: {
+          'BanubaSDK.data': data,
+          'BanubaSDK.wasm': wasm,
+          'BanubaSDK.simd.wasm': simd,
+        },
+      });
+      const webar = new MediaStreamCapture(player);
 
-    if (this.localStream) {
-      player.use(new Media(this.localStream));
-      await player.applyEffect(new Effect(blur));
-      await player.play();
+      if (this.localStream) {
+        player.use(new Media(this.localStream));
 
-      const audio = this.localStream.getAudioTracks()[0];
-      const video = webar.getVideoTrack();
+        if (!this.isBlured) {
+          await player.applyEffect(new Effect(blur));
+        }
 
-      this.localStream = new MediaStream([audio, video]);
+        await player.play();
 
-      // eslint-disable-next-line no-param-reassign
-      ref.srcObject = new MediaStream([audio, video]);
+        const audio = this.localStream.getAudioTracks()[0];
+        const video = !this.isBlured ? webar.getVideoTrack() : (await navigator.mediaDevices
+          .getUserMedia({ video: true })).getVideoTracks()[0];
 
-      await this.connection.getSenders()[1].replaceTrack(video);
+        const newStream = new MediaStream([audio, video]);
+
+        this.localStream = newStream;
+
+        // eslint-disable-next-line no-param-reassign
+        ref.srcObject = newStream;
+
+        await this.connection.getSenders()[1].replaceTrack(video);
+
+        this.isBlured = !this.isBlured;
+      }
+    } catch (e: any) {
+      toast.error(e.meesage, {
+        theme: 'dark',
+      });
     }
   };
 
@@ -177,7 +204,7 @@ class RoomStore implements RootStoreType {
     return id;
   };
 
-  add = async (id: string) => {
+  add = async (id: string): Promise<void> => {
     const callDoc = this.app.collection('calls').doc(id);
     const answers = callDoc.collection('answers');
     const offers = callDoc.collection('offers');

@@ -11,6 +11,7 @@ import Button from '../../components/button';
 import 'react-toastify/dist/ReactToastify.css';
 // @ts-ignore
 import poster from '../../assets/images/poster.jpg';
+import Loader from '../../components/loader';
 
 const Room: FC = observer(() => {
   const localStreamRef = useRef<null | HTMLVideoElement>(null);
@@ -19,10 +20,11 @@ const Room: FC = observer(() => {
 
   const [isAudioActive, setIsAudioActive] = useState<boolean>(false);
   const [isVideoActive, setIsVideoActive] = useState<boolean>(false);
+  const [isBluring, setIsBluring] = useState<boolean>(false);
   const [id, setId] = useState<string>('');
 
   const {
-    reloadTrack, setStream, createOffer, add, addBlur,
+    reloadTrack, setStream, createOffer, add, changeBlurEffect, isBlured,
   } = RoomStore;
 
   const getMedia = async () => {
@@ -74,7 +76,11 @@ const Room: FC = observer(() => {
     }, 3000);
   };
 
-  const blur = () => addBlur.call(RoomStore, localStreamRef.current as HTMLVideoElement);
+  const blur = async () => {
+    setIsBluring(true);
+    await changeBlurEffect.call(RoomStore, localStreamRef.current as HTMLVideoElement);
+    setIsBluring(false);
+  };
 
   return (
     <div className={styles.room}>
@@ -82,6 +88,7 @@ const Room: FC = observer(() => {
         <div className={styles.video}>
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
           <video ref={localStreamRef} poster={poster} autoPlay muted />
+          {isBluring ? <div className={styles.loader}><Loader /></div> : null}
           {localStreamRef.current?.srcObject ? <span>You</span> : null}
         </div>
         <div className={styles.video}>
@@ -105,17 +112,19 @@ const Room: FC = observer(() => {
           handleClick={handleAudioClick}
           Icon={MicrophoneIcon}
         />
-        <Button
-          isEnabled
-          handleClick={blur}
-          text="Blur"
-        />
         {localStreamRef.current?.srcObject ? (
-          <Button
-            isEnabled
-            handleClick={invite}
-            Icon={ShareIcon}
-          />
+          <>
+            <Button
+              isEnabled={!isBlured}
+              handleClick={blur}
+              text="Blur"
+            />
+            <Button
+              isEnabled
+              handleClick={invite}
+              Icon={ShareIcon}
+            />
+          </>
         ) : null}
       </div>
       {localStreamRef.current?.srcObject ? (
