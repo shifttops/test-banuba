@@ -1,0 +1,15 @@
+@mixin font($font_name, $file_name, $weight, $style) {
+  @font-face {
+    font-family: $font_name;
+    font-display: swap;
+    src: url("../assets/fonts/#{$file_name}.ttf") format("opentype"),
+    url("../assets/fonts/#{$file_name}.ttf") format("opentype");
+    font-weight: #{$weight};
+    font-style: #{$style};
+  }
+}
+
+@include font("Raleway", "Raleway", "400", "normal");
+@include font("Raleway", "Raleway", "600", "normal");
+@include font("Raleway", "Raleway", "500", "normal");
+@include font("Raleway", "Raleway", "700", "normal");

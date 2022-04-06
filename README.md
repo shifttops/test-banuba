@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Test task for Banuba
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project about P2P connection using WebRTC and Banuba SDK for background blur effect.
 
 ## Available Scripts
 

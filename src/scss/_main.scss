@@ -1,0 +1,107 @@
+@import "./variables";
+@import "./fonts";
+
+html {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background-color: $color-black-007;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: $color-black-05;
+    border-radius: 4px;
+    cursor: default;
+
+    &:hover {
+      background-color: rgba(51, 51, 51, 0.75);
+    }
+  }
+}
+
+body {
+  font-family: "Raleway", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 18px;
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+  background-color: rgb(32, 33, 36);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button:focus,
+input:focus {
+  outline: none;
+}
+
+button {
+  background-color: transparent;
+  border: 0px;
+  padding: 0px;
+}
+
+ul[class],
+ol[class] {
+  padding: 0;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+ul[class],
+ol[class] {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+.wrapper {
+  display: flex;
+  height: 100vh;
+  padding: 100px;
+}
+
+.container {
+  max-width: 1620px;
+  width: 100%;
+  margin: 0 auto;
+}
